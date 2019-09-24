@@ -7,7 +7,7 @@ straight = 1
 right = 2
 left = 3
 
-pub = rospy.Publisher('direction', Direction)
+pub = rospy.Publisher('direction', Direction, queue_size=10)
 
 def decide_direction(distance):
     distance1 = distance.distance1
