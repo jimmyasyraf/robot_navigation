@@ -1,4 +1,4 @@
 <launch>
-  <node name="arduino_node" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0"></node>
   <node name="obstacle_avoidance_node" pkg="robot_navigation" type="obstacle_avoidance.py"></node>
+  <node name="controller_node" pkg="robot_navigation" type="controller.py"></node>
 </launch>

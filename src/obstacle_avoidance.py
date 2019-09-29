@@ -6,7 +6,8 @@ from robot_navigation.msg import Direction
 straight = 1
 right = 2
 left = 3
-stop = 4
+backward = 4
+stop = 5
 
 pub = rospy.Publisher('direction', Direction, queue_size=10)
 

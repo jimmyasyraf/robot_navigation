@@ -1,21 +1,6 @@
 #!/usr/bin/python
 import RPi.GPIO as GPIO
 import time
-import rospy
-from robot_navigation.msg import Distance
-from robot_navigation.msg import Direction
-
-# center
-TRIG1 = 4
-ECHO1 = 17
-
-# right
-TRIG2 = 27
-ECHO2 = 22
-
-# left
-TRIG3 = 19
-ECHO3 = 26
 
 class Ultrasonic():
 	def __init__(self, gpio_trigger, gpio_echo, range_min=0, range_max=400):
@@ -75,30 +60,3 @@ class Ultrasonic():
 	def is_reading(self):
 		return(self.is_reading)
 
-def exit_gracefully():
-	GPIO.cleanup()
-
-def move():
-	distance_publisher = rospy.Publisher('distance', Distance, queue_size=10)
-	rospy.init_node('controller', anonymous=True)
-	rospy.on_shutdown(exit_gracefully)
-	rate = rospy.Rate(5)
-
-	ultrasonic1 = Ultrasonic(TRIG1, ECHO1)
-	ultrasonic2 = Ultrasonic(TRIG2, ECHO2)
-	ultrasonic3 = Ultrasonic(TRIG3, ECHO3)
-
-	while not rospy.is_shutdown():
-		distance1 = ultrasonic1.get_range()
-		distance2 = ultrasonic2.get_range()
-		distance3 = ultrasonic3.get_range()
-		distance_msg = Distance()
-		distance_msg.distance1 = distance1
-		distance_msg.distance2 = distance2
-		distance_msg.distance3 = distance3
-		rospy.loginfo(distance_msg)
-		distance_publisher.publish(distance_msg)
-		rate.sleep()
-
-if __name__ == '__main__':
-	move()
