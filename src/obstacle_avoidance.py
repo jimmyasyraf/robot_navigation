@@ -16,13 +16,18 @@ def decide_direction(distance):
     distance3 = distance.distance3
     direction = straight
 
-    if (distance1 < 20):
+    if (distance1 < 30):
         if (distance2 > distance3):
             direction = right
         else:
             direction = left
     else:
-        direction = straight
+        if (distance2 < distance3) and (distance2 < 30):
+            direction = left
+        elif (distance3 < distance2) and (distance3 < 30):
+            direction = right
+        else:
+            direction = straight
 
     return direction
 
