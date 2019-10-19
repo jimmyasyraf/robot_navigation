@@ -4,10 +4,18 @@ import rospy
 import RPi.GPIO as GPIO
 from geometry_msgs.msg import Twist
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+MOTOR_RIGHT_IN1 = 18
+MOTOR_RIGHT_IN2 = 23
+MOTOR_RIGHT_EN = 24
+
+MOTOR_LEFT_IN1 = 16
+MOTOR_LEFT_IN2 = 20
+MOTOR_LEFT_EN = 21
 
 FREQUENCY = 1000
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 def clip(value, minimum, maximum):
 	if value < minimum:
@@ -15,9 +23,6 @@ def clip(value, minimum, maximum):
 	elif value > maximum:
 		return maximum
 	return value
-
-def exit_gracefully():
-	GPIO.cleanup()
 
 class Motor:
 	def __init__(self, in1, in2, en):
@@ -54,8 +59,8 @@ class Driver:
 		self._max_speed = rospy.get_param('~max_speed', 0.5)
 		self._wheel_base = rospy.get_param('~wheel_base', 0.26)
 
-		self._left_motor = Motor(16, 20, 21)
-		self._right_motor = Motor(18, 23, 24)
+		self._left_motor = Motor(MOTOR_LEFT_IN1, MOTOR_LEFT_IN2, MOTOR_LEFT_EN)
+		self._right_motor = Motor(MOTOR_RIGHT_IN1, MOTOR_RIGHT_IN2, MOTOR_RIGHT_EN)
 
 		self._left_speed_percent = 0
 		self._right_speed_percent = 0
@@ -76,7 +81,7 @@ class Driver:
 
 	def run(self):
 		rate = rospy.Rate(self._rate)
-		rospy.on_shutdown(exit_gracefully)
+		rospy.on_shutdown(GPIO.cleanup())
 
 		while not rospy.is_shutdown():
 			delay = rospy.get_time() - self._last_received
