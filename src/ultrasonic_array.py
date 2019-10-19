@@ -3,6 +3,7 @@
 from ultrasonic import Ultrasonic
 import math
 import rospy
+import RPi.GPIO as GPIO
 from sensor_msgs.msg import Range
 
 NUM_ULTRASONIC = 3
@@ -15,6 +16,9 @@ ECHO_RIGHT = 22
 
 TRIGGER_LEFT = 19
 ECHO_LEFT = 26
+
+def exit_gracefully():
+	GPIO.cleanup()
 
 class UltrasonicArray():
 	def __init__(self, num_ultrasonic, trigger_list, echo_list, range_min, range_max, angle_min, angle_max):
@@ -58,6 +62,7 @@ class UltrasonicArray():
 
 	def run(self):
 		rate = rospy.Rate(10)
+		rospy.on_shutdown(exit_gracefully)
 		rospy.loginfo("Running...")
 
 
@@ -67,7 +72,7 @@ class UltrasonicArray():
 
 		rospy.loginfo("Stopped")
 
-if __name__ == "__main__":
+def main():
 	rospy.loginfo("Setting up ultrasonic node")
 	rospy.init_node('ultrasonic_array')
 
@@ -76,3 +81,6 @@ if __name__ == "__main__":
 
 	ultrasonic_array = UltrasonicArray(NUM_ULTRASONIC, trigger_list, echo_list, 5, 400, -30, 30)
 	ultrasonic_array.run()
+
+if __name__ == '__main__':
+	main()
