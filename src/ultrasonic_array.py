@@ -20,6 +20,9 @@ ECHO_LEFT = 26
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+def exit_gracefully():
+	GPIO.cleanup()
+
 class Ultrasonic():
 	def __init__(self, trigger, echo, range_min=0, range_max=400):
 		self._trigger = trigger
@@ -82,13 +85,13 @@ class UltrasonicArray():
 		rospy.loginfo("Initializing the arrays")
 
 		for i in range(num_ultrasonic):
-			ultrasonic = Ultrasonic(trigger_list[i], echo_list[i], range_min, range_max)
-			angle = angle_min + delta_angle*i
-			ultrasonic.angle = math.radians(angle)
+			ultrasonic = Ultrasonic(trigger_list[i], echo_list[i], range_min*100, range_max*100)
+			angle_deg = angle_min + delta_angle*i
+			ultrasonic.angle = math.radians(angle_deg)
 			self.ultrasonic_array.append(ultrasonic)
 			rospy.loginfo("Sonar %d set"%i)
 
-			topic_name = "/ultrasonic/%d"%i
+			topic_name = "/robot/ultrasonic/%d"%i
 			publisher = rospy.Publisher(topic_name, Range, queue_size=10)
 			self.publisher_array.append(publisher)
 			rospy.loginfo("Publisher %d set with topic %s"%(i, topic_name))
@@ -104,16 +107,16 @@ class UltrasonicArray():
 
 		for i in range(self.num_ultrasonic):
 			range_cm = self.ultrasonic_array[i].get_range()
-			range_array.append(range_cm)
-			self._message.range = range_cm
+			range_array.append(range_cm*0.01)
+			self._message.range = range_cm*0.01
 			self._message.field_of_view = self.ultrasonic_array[i].angle
 			self.publisher_array[i].publish(self._message)
 
-		rospy.loginfo("Range (cm): left = %4.2f center = %4.2f right = %4.2f"%(range_array[0], range_array[1], range_array[2]))
+		rospy.loginfo("Range (m): left = %4.2f center = %4.2f right = %4.2f"%(range_array[0], range_array[1], range_array[2]))
 
 	def run(self):
 		rate = rospy.Rate(10)
-		rospy.on_shutdown(GPIO.cleanup())
+		rospy.on_shutdown(exit_gracefully)
 		rospy.loginfo("Running...")
 
 
@@ -130,7 +133,7 @@ def main():
 	trigger_list = [TRIGGER_LEFT, TRIGGER_CENTER, TRIGGER_RIGHT]
 	echo_list = [ECHO_LEFT, ECHO_CENTER, ECHO_RIGHT]
 
-	ultrasonic_array = UltrasonicArray(NUM_ULTRASONIC, trigger_list, echo_list, 5, 400, -30, 30)
+	ultrasonic_array = UltrasonicArray(NUM_ULTRASONIC, trigger_list, echo_list, 0.05, 3.0, -30, 30)
 	ultrasonic_array.run()
 
 if __name__ == '__main__':

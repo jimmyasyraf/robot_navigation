@@ -17,6 +17,9 @@ FREQUENCY = 1000
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+def exit_gracefully():
+	GPIO.cleanup()
+
 def clip(value, minimum, maximum):
 	if value < minimum:
 		return minimum
@@ -65,7 +68,7 @@ class Driver:
 		self._left_speed_percent = 0
 		self._right_speed_percent = 0
 
-		rospy.Subscriber('cmd_vel', Twist, self.velocity_received_callback)
+		rospy.Subscriber('/robot/cmd_vel', Twist, self.velocity_received_callback)
 
 	def velocity_received_callback(self, message):
 		self._last_received = rospy.get_time()
@@ -81,7 +84,7 @@ class Driver:
 
 	def run(self):
 		rate = rospy.Rate(self._rate)
-		rospy.on_shutdown(GPIO.cleanup())
+		rospy.on_shutdown(exit_gracefully)
 
 		while not rospy.is_shutdown():
 			delay = rospy.get_time() - self._last_received
