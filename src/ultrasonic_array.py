@@ -29,7 +29,7 @@ class UltrasonicArray():
 		for i in range(num_ultrasonic):
 			ultrasonic = Ultrasonic(trigger_list[i], echo_list[i], range_min, range_max)
 			angle = angle_min + delta_angle*i
-			ultrasonic.angle = math.radians(angle_deg)
+			ultrasonic.angle = math.radians(angle)
 			self.ultrasonic_array.append(ultrasonic)
 			rospy.loginfo("Sonar %d set"%i)
 
@@ -67,7 +67,7 @@ class UltrasonicArray():
 
 		rospy.loginfo("Stopped")
 
-if __name__ = "__main__":
+if __name__ == "__main__":
 	rospy.loginfo("Setting up ultrasonic node")
 	rospy.init_node('ultrasonic_array')
 
