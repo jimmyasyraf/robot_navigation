@@ -14,9 +14,6 @@ MOTOR_LEFT_EN = 21
 
 FREQUENCY = 1000
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-
 def exit_gracefully():
 	GPIO.cleanup()
 
@@ -84,7 +81,6 @@ class Driver:
 
 	def run(self):
 		rate = rospy.Rate(self._rate)
-		rospy.on_shutdown(exit_gracefully)
 
 		while not rospy.is_shutdown():
 			delay = rospy.get_time() - self._last_received
@@ -101,4 +97,13 @@ def main():
 	driver.run()
 
 if __name__ == '__main__':
-	main()
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setwarnings(False)
+	try:
+		main()
+	except KeyboardInterrupt:
+		pass
+	except rospy.ROSInterruptException:
+		pass
+	finally:
+		GPIO.cleanup()

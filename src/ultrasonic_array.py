@@ -17,9 +17,6 @@ ECHO_RIGHT = 22
 TRIGGER_LEFT = 19
 ECHO_LEFT = 26
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-
 def exit_gracefully():
 	GPIO.cleanup()
 
@@ -116,7 +113,6 @@ class UltrasonicArray():
 
 	def run(self):
 		rate = rospy.Rate(10)
-		rospy.on_shutdown(exit_gracefully)
 		rospy.loginfo("Running...")
 
 
@@ -137,4 +133,13 @@ def main():
 	ultrasonic_array.run()
 
 if __name__ == '__main__':
-	main()
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setwarnings(False)
+	try:
+		main()
+	except KeyboardInterrupt:
+		pass
+	except rospy.ROSInterruptException:
+		pass
+	finally:
+		GPIO.cleanup()
