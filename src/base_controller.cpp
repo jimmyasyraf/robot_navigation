@@ -6,7 +6,7 @@
 #include <cmath>
 
 double radius = 0.035;                              //Wheel radius, in m
-double wheelbase = 0.24;                          //Wheelbase, in m
+double wheelbase = 0.27;                          //Wheelbase, in m
 double two_pi = 6.28319;
 double speed_act_left = 0.0;
 double speed_act_right = 0.0;

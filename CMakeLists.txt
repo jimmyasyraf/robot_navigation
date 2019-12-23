@@ -11,7 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   tf
+  geometry_msgs
+  sensor_msgs
+  serial
   std_msgs
+  std_srvs
   message_generation
 )
 
@@ -204,4 +208,6 @@ include_directories(
 # catkin_add_nosetests(test)
 
 add_executable(base_controller src/base_controller.cpp)
+add_executable(serial_to_imu src/serial_to_imu.cpp)
 target_link_libraries(base_controller ${catkin_LIBRARIES})
+target_link_libraries(serial_to_imu ${catkin_LIBRARIES})

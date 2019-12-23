@@ -1,4 +1,9 @@
 <launch>
-  <node name="obstacle_avoidance_node" pkg="robot_navigation" type="obstacle_avoidance.py"></node>
-  <node name="controller_node" pkg="robot_navigation" type="controller.py"></node>
+  <node name="arduino_motor_node" pkg="rosserial_python" type="serial_node.py">
+    <param name="port" value="/dev/arduino_motor"/>
+  </node>
+  <node name="arduino_imu_node" pkg="robot_navigation" type="serial_to_imu">
+    <param name="port" value="/dev/arduino_imu"/>
+  </node>
+  <node name="base_controller_node" pkg="robot_navigation" type="base_controller"/>
 </launch>
