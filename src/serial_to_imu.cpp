@@ -51,9 +51,9 @@ int main(int argc, char** argv)
   private_node_handle.param<double>("angular_velocity_stddev", angular_velocity_stddev, 0.0);
   private_node_handle.param<double>("orientation_stddev", orientation_stddev, 0.0);
 
-  ros::NodeHandle nh("imu");
-  ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("data", 50);
-  ros::Publisher imu_temperature_pub = nh.advertise<sensor_msgs::Temperature>("temperature", 50);
+  ros::NodeHandle nh;
+  ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("imu_data", 50);
+  //ros::Publisher imu_temperature_pub = nh.advertise<sensor_msgs::Temperature>("temperature", 50);
   ros::ServiceServer service = nh.advertiseService("set_zero_orientation", set_zero_orientation);
 
   ros::Rate r(200); // 200 hz
@@ -115,7 +115,8 @@ int main(int argc, char** argv)
                 double yf = y/16384.0;
                 double zf = z/16384.0;
 
-                tf::Quaternion orientation(xf, yf, zf, wf);
+                //tf::Quaternion orientation(xf, yf, zf, wf);
+                tf::Quaternion orientation(0, 0, zf, wf);
 
                 if (!zero_orientation_set)
                 {
@@ -181,12 +182,12 @@ int main(int argc, char** argv)
 
                 quaternionTFToMsg(differential_rotation, imu.orientation);
 
-                imu.angular_velocity.x = gxf;
-                imu.angular_velocity.y = gyf;
+                imu.angular_velocity.x = 0; //gxf;
+                imu.angular_velocity.y = 0; //gyf;
                 imu.angular_velocity.z = gzf;
 
-                imu.linear_acceleration.x = axf;
-                imu.linear_acceleration.y = ayf;
+                imu.linear_acceleration.x = 0; //axf;
+                imu.linear_acceleration.y = 0; //ayf;
                 imu.linear_acceleration.z = azf;
 
                 imu_pub.publish(imu);
@@ -196,7 +197,7 @@ int main(int argc, char** argv)
                 temperature_msg.header.frame_id = frame_id;
                 temperature_msg.temperature = temperature_in_C;
 
-                imu_temperature_pub.publish(temperature_msg);
+                //imu_temperature_pub.publish(temperature_msg);
 
                 // publish tf transform
                 if (broadcast_tf)
