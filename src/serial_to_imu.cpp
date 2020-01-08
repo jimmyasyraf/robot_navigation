@@ -186,8 +186,8 @@ int main(int argc, char** argv)
                 imu.angular_velocity.y = 0; //gyf;
                 imu.angular_velocity.z = gzf;
 
-                imu.linear_acceleration.x = 0; //axf;
-                imu.linear_acceleration.y = 0; //ayf;
+                imu.linear_acceleration.x = axf;
+                imu.linear_acceleration.y = ayf;
                 imu.linear_acceleration.z = azf;
 
                 imu_pub.publish(imu);
